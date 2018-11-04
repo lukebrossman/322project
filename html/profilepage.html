@@ -1,0 +1,77 @@
+ <head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <link href="profilepage.css" rel=stylesheet>
+</head>
+
+    <!-- Ace Responsive Menu -->
+    <nav>
+        <!-- Menu Toggle btn-->
+        <div class="menu-toggle">
+            <h3>Menu</h3>
+            <button type="button" id="menu-btn">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <!-- Responsive Menu Structure-->
+        <!--Note: declare the Menu style in the data-menu-style="horizontal" (options: horizontal, vertical, accordion) -->
+        <ul id="respMenu" class="ace-responsive-menu" data-menu-style="horizontal">
+            <li>
+                <a href="javascript:;">
+                    <i class="fa fa-home" aria-hidden="true"></i>
+                    <span class="title">Sign Out</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:;">
+                    <i class="fa fa-cube" aria-hidden="true"></i>
+                    <span class="title">Courses</span>
+
+                </a>
+                <ul>
+                    <li>
+                        <a href="#">Veiw Available</a>
+                    </li>
+                    <li>
+                        <a href="#">Veiw All</a>
+                    </li>
+                    <li>
+                        <a href="#">Search Courses</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="javascript:;">
+                    <i class="fa fa-cube" aria-hidden="true"></i>
+                    <span class="title">My Teaching Assistantships</span>
+
+                </a>
+                <ul>
+                    <li>
+                        <a href="#">Classes I'm TA'ing</a>
+                    </li>
+                    <li>
+                        <a href="#">Veiw Pending</a>
+                    </li>
+                </ul>
+            </li>
+
+            <b href="javascript:;">
+                <i class="fa fa-crop" aria-hidden="true"></i>
+                <span class="user_name">Luke Brossman</span>
+            </b>
+        </ul>
+    </nav>
+    	<!--Plugin Initialization-->
+     <script type="text/javascript">
+         $(document).ready(function () {
+             $("#respMenu").aceResponsiveMenu({
+                 resizeWidth: '768', // Set the same in Media query       
+                 animationSpeed: 'fast', //slow, medium, fast
+                 accoridonExpAll: false //Expands all the accordion menu on click
+             });
+         });
+	</script>

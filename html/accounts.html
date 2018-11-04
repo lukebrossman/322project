@@ -1,0 +1,85 @@
+<head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+    <script type="text/javascript" src="/Javascript/AccountCreation.js"></script>
+    <link rel="stylesheet" type="text/css" href="creation.css">
+</head>
+
+<div class="container">
+            <h1 class="form-heading">git push master --force</h1>
+            <form class="form-horizontal" role="form">
+                <h2>Register An Account</h2>
+                <div class="form-group">
+                    <label for="firstName" class="col-sm-3 control-label">First Name: </label>
+                    <div class="col-sm-9">
+                        <input type="text" id="firstName" placeholder="First Name" class="form-control" autofocus> 
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="lastName" class="col-sm-3 control-label"> <br>Last Name: </label>
+                    <div class="col-sm-9">
+                        <input type="text" id="lastName" placeholder="Last Name" class="form-control" autofocus>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="idNumber" class="col-sm-3 control-label"> <br>ID Number: </label>
+                    <div class="col-sm-9">
+                        <input type="number" id="idNumber" placeholder="0123456789" class="form-control"><br>
+                    </div>
+                <div class="form-group">
+                    <label for="email" class="col-sm-3 control-label"> <br>Email: </label>
+                    <div class="col-sm-9">
+                        <input type="email" id="email" placeholder="joe.smith@wsu.edu" class="form-control" name= "email">
+                        <span class="help-block"><br>(Please use your WSU Email Address.) <br> </span> <br>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-sm-3 control-label"> Password: </label>
+                    <div class="col-sm-9">
+                        <input type="password" id="password" placeholder="Password" class="form-control"> <br>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-sm-3 control-label"> <br>Confirm Password: </label>
+                    <div class="col-sm-9">
+                        <input type="password" id="password" placeholder="Confirm Password" class="form-control"> <br>
+                    </div>
+                </div>
+                
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber" class="col-sm-3 control-label"> <br>Phone Number: </label>
+                    <div class="col-sm-9">
+                        <input type="phoneNumber" id="phoneNumber" placeholder="XXX-XXX-XXXX" class="form-control">
+                        
+                    </div>
+                </div>
+               
+                <div class="form-group">
+                    <label class="control-label col-sm-3"> <br>User Type: </label>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <label class="radio-inline">
+                                    <br><input type="radio" id="studentType" value="Student" onclick = "setType(stud)">Student
+                                </label>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="radio-inline">
+                                    <input type="radio" id="instructorType" value="Instructor" onclick = "setType(ins)">Instructor 
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+            
+            
+                <button onclick = "createAccount()">Register</button>
+            </form> <!-- /form -->
+        </div> <!-- ./container -->

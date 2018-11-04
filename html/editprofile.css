@@ -1,0 +1,79 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto);
+
+.avatar {
+    vertical-align: middle;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+}
+
+body {
+    background: url("wsu_campus.jpg") fixed;
+    background-size: cover;
+}
+
+.container
+{
+    max-width: 80%;
+    padding: 15px;
+    margin: 0 auto;
+    border-radius: 0.3em;
+    background-color: darkred;
+    align-content: center;
+    align-items: center;
+   
+}
+
+label
+{
+    color: lightgrey;
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 2px;
+    font-size: 15px;
+    font-weight: 400; 
+}
+
+h6
+{
+    color: lightgrey;
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 2px;
+    font-size: 15px;
+    font-weight: 200; 
+    text-align:center;
+}
+
+input
+{
+    color: lightgrey;
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 2px;
+    font-size: 15px;
+    font-weight: 200; 
+    text-align:center;
+}
+
+h1
+{
+    color: lightgrey;
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 2px;
+    font-size: 25px;
+    font-weight: 600; 
+}
+
+.form-group
+{
+    margin: auto;
+    text-align: center;
+}
+
+.col-sm-9
+{
+    align-content: center;
+    align-items: center;
+}
+
+
+
+
