@@ -60,7 +60,7 @@ var Main = (function(){
         var post = {};
         post.className = $("#className").val();
         post.classNum = $("#classNum").val();
-        post.classDisc = $("#classDisc").val();
+        post.classDisc = $("#classDesc").val();
         var onSuccess = function()
         {
             alert("Class added");
@@ -71,7 +71,7 @@ var Main = (function(){
             console.log("Class create error");
             alert("Class create error");
         };
-        makePostRequest(apiUrl+"/"+post.classNum,post,onSuccess,onFailure);   
+        makePostRequest("/"+post.classNum,post,onSuccess,onFailure);   
     }
 
     //TODO implement into html with onclick OR have a click listener
@@ -89,11 +89,11 @@ var Main = (function(){
         switch(accountType)
         {
             case type == "stud"://student account code block
-                location.assign("TODO got to student account creation page");
+                window.location.assign("/student_account.html");
                 break;
 
             case type == "ins"://instructor account code block
-                location.assign("TODO got to teacher account creation page");
+                window.location.assign("/instructor_account.html");
                 break;
 
             default:
@@ -109,13 +109,32 @@ var Main = (function(){
             for(i = 0; i<data.classes.length; i++)
             {
                 insertclass(data.classes[i], true);
-            }
 
+            }
+            console.log("success get classes");
         };
         var onFailure = function() { 
             console.error('get classes failed'); 
         };
-        makeGetRequest(apiUrl + "/api/classes" , onSuccess, onFailure);
+        makeGetRequest("/api/classes" , onSuccess, onFailure);
+
+    };
+
+    var getStudents = function() {
+        // Prepare the AJAX handlers for success and failure
+        var onSuccess = function(data) {
+            //dynamic length to prevent errors
+            for(i = 0; i<data.students.length; i++)
+            {
+                insertclass(data.student[i], true);
+                console.log(data.student[i].fname);
+            }
+            console.log("success get student");
+        };
+        var onFailure = function() { 
+            console.error('get students failed'); 
+        };
+        makeGetRequest("/api/account/allstudents" , onSuccess, onFailure);
 
     };
 
@@ -130,49 +149,37 @@ var Main = (function(){
 
     if (beginning) {
         $(".class-group").prepend(newElem);
+        console.log("prepend");
     } else {
-            $(".class-group").append(newElem);
+        $(".class-group").append(newElem);
     }
     };
 
-    var getStudents = function() {
-        // Prepare the AJAX handlers for success and failure
-        var onSuccess = function(data) {
-            //dynamic length to prevent errors
-            for(i = 0; i<data.students.length; i++)
-            {
-                insertclass(data.student[i], true)
-            }
-            console.log("success get student");
-        };
-        var onFailure = function() { 
-            console.error('get students failed'); 
-        };
-        makeGetRequest(apiUrl + "/api/account/allstudents" , onSuccess, onFailure);
-
-    };
-
-
-    function insertstudent(course, beginning) {
-        studenttemplate = $(".list-group-item")[0].outerHTML;
+    function insertstudent(student, beginning) {
+    studenttemplate = $(".list-group-item")[0].outerHTML;
 
     // Start with the template, make a new DOM element using jQuery
     var newElem = $(studenttemplate);
     // Populate the data in the new element
-    newElem.innerHTML = course.title 
+    newElem.innerHTML = student.fname;
 
     if (beginning) {
         $(".student-group").prepend(newElem);
+        console.log("prepend");
     } else {
             $(".student-group").append(newElem);
     }
     };
 
     function createStudent(){
-
-        account.major = "TODO: need to implement in HTML";
-        account.gpa =  "TODO: need to implement in HTML";
-        account.gradDate = "TODO: need to implement in HTML";
+        account.fname = $("#firstName").val();
+        account.lname = $("#lastName").val();
+        account.id = $("#idNumber").val();
+        account.email = $("#email").val();
+        account.phone = $('#phoneNumber').val();
+        account.major = $("#major").val();
+        account.gpa =  $("#gpa").val();
+        account.gradDate = $("#graddate").val();
         
             //onsuc onfail events for the post req
             var onSuccess = function()
@@ -186,7 +193,7 @@ var Main = (function(){
                 alert("Account create error");
             };
 
-        makePostRequest(apiUrl+"api/account/student",account,onSuccess,onFailure);
+        makePostRequest("api/account/student",account,onSuccess,onFailure);
 
     }
 
@@ -208,13 +215,15 @@ var Main = (function(){
                 alert("Account create error");
             };
 
-        makePostRequest(apiUrl+"api/account/instructor",account,onSuccess,onFailure);
+        makePostRequest("api/account/instructor",account,onSuccess,onFailure);
 
     }
 
     function start(){
         $('.getstudents').click(getStudents);
         $('.getclasses').click(getClasses);
+        $('.createclass').click(createClass);
+        $('.createstudent').click(createStudent);
     }
     return {
         start: start

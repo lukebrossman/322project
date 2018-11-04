@@ -116,6 +116,7 @@ def rowToClass(row):
 
 #route to create a new course
 @app.route(baseURL + 'classes',methods=['POST'])
+@crossdomain(origin='*')
 def newClass():
     addedCourse = Class(**request.json)
     try:
