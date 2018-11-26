@@ -41,6 +41,7 @@
                 <ul class="class-group">
                     <li class="list-group-item">class</li>
                 </ul>
+                <button class="getclasses">Get Classes</button>
             </div>
         </div>
 
@@ -81,10 +82,6 @@
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon glyphicon glyphicon-search"></span>
-                            <input type="text" id="phoneNumber" name="SearchDualList" class="form-control" placeholder="Phone #" />
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon glyphicon glyphicon-search"></span>
                             <input type="text" id="major" name="SearchDualList" class="form-control" placeholder="Major" />
                         </div>
                         <div class="input-group">
@@ -107,10 +104,60 @@
                 <ul class="student-group">
                     <li class="list-group-item">student</li>
                 </ul>
+                <button class="getstudents">Get students</button>
             </div>
         </div>
-        <button class="getclasses">Get Classes</button>
-        <button class="getstudents">Get students</button>
-
+        <div class="input-group">
+            <span class="input-group-addon glyphicon glyphicon-search"></span>
+            <label class="label">Student ID</label>
+            <input type="text" id="editID" name="SearchDualList" class="form-control" placeholder="ID Number" />
+        </div>
+        <button class="editstudent">Edit Student Account</button>
+        <div class="edit" id="edit">
+            <div class="col-md-2">
+                <div class="btn-group">
+                    <a class="btn btn-default selector" title="select all"><i class="glyphicon glyphicon-unchecked"></i></a>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-search"></span>
+                    <label class="label">First Name</label>
+                    <input type="text" id="editfirstName" name="SearchDualList" class="form-control" placeholder="First Name" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-search"></span>
+                    <label class="label">Last Name</label>
+                    <input type="text" id="editlastName" name="SearchDualList" class="form-control" placeholder="Last Name" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-search"></span>
+                    <label class="label">Email</label>
+                    <input type="text" id="editemail" name="SearchDualList" class="form-control" placeholder="Email" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-search"></span>
+                    <label class="label">Major</label>
+                    <input type="text" id="editmajor" name="SearchDualList" class="form-control" placeholder="Major" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-search"></span>
+                    <label class="label">GPA</label>
+                    <input type="text" id="editgpa" name="SearchDualList" class="form-control" placeholder="GPA" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-search"></span>
+                    <label class="label">Graduation Date</label>
+                    <input type="text" id="editgraddate" name="SearchDualList" class="form-control" placeholder="Grad Date" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="btn-group">
+                    <a class="btn btn-default selector" title="select all"><i class="glyphicon glyphicon-unchecked"></i></a>
+            </div>
+            </div>
+                <button class="savestudent">Save student account</button>
+            </div>
+        </div>
 	</div>
 </div>

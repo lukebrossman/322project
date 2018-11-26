@@ -9,10 +9,11 @@ from sqlalchemy import exc #so we can handle integrity errors
 import datetime
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app)
+#cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqlalchemy-demo.db'
-app.config['CORS_HEADERS'] = 'Content-Type'
+#app.config['CORS_HEADERS'] = 'Content-Type'
 db = sqlalchemy.SQLAlchemy(app)
 
 baseURL = "/api/"
@@ -42,14 +43,34 @@ class Student(db.Model):
     fname = db.Column(db.String(64),nullable = False)
     lname = db.Column(db.String(64),nullable = False)
     email = db.Column(db.String(64),nullable = False)
-    majr = db.Column(db.String(64),nullable = False)
+    major = db.Column(db.String(64),nullable = False)
     gpa = db.Column(db.Integer, nullable = False)
     gradDate = db.Column(db.String(64),nullable = False)
 
 #route for student profile creation
 @app.route(baseURL + 'account/student',methods=['POST'])
 def newStudent():
-    return jsonify({"status": 1, "newProf": "Yay"}), 200
+    newStud = Student(**request.json)
+    db.session.add(newStud)
+    db.session.commit()
+    db.session.refresh(newStud)
+    return jsonify({"status": 1, "newStud":rowToStudent(newStud)}), 200
+
+#route to edit a student account
+@app.route(baseURL + 'editaccount/student/<int:id>',methods=['POST'])
+def editStudent(id):
+    editedStudent = Student(**request.json)
+    row = Student.query.filter_by(id = id).first()
+    row.id = editedStudent.id
+    row.fname = editedStudent.fname
+    row.lname = editedStudent.lname
+    row.email = editedStudent.email
+    row.major = editedStudent.major
+    row.gpa = editedStudent.gpa
+    row.gradDate = editedStudent.gradDate
+    db.session.commit()
+    db.session.refresh(row)
+    return jsonify({"status": 1, "editedStud":rowToStudent(row)}), 200
   
 #convert a passed json to a student profile
 def rowToStudent(row):
@@ -58,7 +79,7 @@ def rowToStudent(row):
         "fname":row.fname,
         "lname":row.lname,
         "email":row.email,
-        "majr":row.majr,
+        "major":row.major,
         "gpa":row.gpa,
         "gradDate":row.gradDate
         }
@@ -115,8 +136,7 @@ def rowToClass(row):
     return row
 
 #route to create a new course
-@app.route(baseURL + 'classes',methods=['POST'])
-@crossdomain(origin='*')
+@app.route(baseURL + 'newclass',methods=['POST'])
 def newClass():
     addedCourse = Class(**request.json)
     try:
@@ -140,17 +160,19 @@ def getAllClasses():
 
     return  jsonify({"status": 1, "classes": result}), 200
  
+#get instructor by ID
 @app.route(baseURL+"account/instructor/<int:id>",methods=["GET"])
 def getIns(id):
     row = Instructor.query.filter_by(id=id).first()
     return jsonify({"instructor":rowToIns(row),"status":1}),200
 
+#get all instructors
 @app.route(baseURL+"account/instructors",methods=["GET"])
 def getAllIns():
     row = Instructor.query.filter_by(id=id).first()
     return jsonify({"instructor":rowToIns(row),"status":1}),200
 
-#TODO get student profile route
+#get student by ID
 @app.route(baseURL+"account/student/<int:id>",methods=["GET"])
 def getStudent(id):
     row = Student.query.filter_by(id=id).first()
@@ -244,8 +266,6 @@ def getLogin(login):
     else:
         print("user not found")
     return jsonify({"status": 1, "login": login}, 500)
-
-
 
 
 def main():

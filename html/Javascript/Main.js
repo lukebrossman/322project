@@ -46,6 +46,7 @@ var Main = (function(){
         alert("flask is serving the js");
     }
 
+    //Doesn't yet do anything
     function setType(newType){
         accountType = newType;
     }
@@ -58,9 +59,9 @@ var Main = (function(){
     function createClass()
     {
         var post = {};
-        post.className = $("#className").val();
-        post.classNum = $("#classNum").val();
-        post.classDisc = $("#classDesc").val();
+        post.name = $("#className").val();
+        post.title = $("#classNum").val();
+        post.desc = $("#classDesc").val();
         var onSuccess = function()
         {
             alert("Class added");
@@ -71,7 +72,7 @@ var Main = (function(){
             console.log("Class create error");
             alert("Class create error");
         };
-        makePostRequest("/"+post.classNum,post,onSuccess,onFailure);   
+        makePostRequest("/api/newclass",post,onSuccess,onFailure);   
     }
 
     //TODO implement into html with onclick OR have a click listener
@@ -82,7 +83,6 @@ var Main = (function(){
         account.id = $("#idNumber").val();
         account.email = $("#email").val();
         account.phone = $('#phoneNumber').val();
-        window.location.assign("/student_account.html");
 
         //handle if our account is instructor or student since they have different fields
         //they also have different db routes and this dynamically handles that
@@ -109,7 +109,7 @@ var Main = (function(){
             for(i = 0; i<data.classes.length; i++)
             {
                 insertclass(data.classes[i], true);
-
+                console.log(data.classes[i]);
             }
             console.log("success get classes");
         };
@@ -126,9 +126,10 @@ var Main = (function(){
             //dynamic length to prevent errors
             for(i = 0; i<data.students.length; i++)
             {
-                insertclass(data.student[i], true);
-                console.log(data.student[i].fname);
+                insertstudent(data.students[i], true);
+                console.log(data.students[i]);
             }
+            console.log(data.students.length);
             console.log("success get student");
         };
         var onFailure = function() { 
@@ -142,41 +143,40 @@ var Main = (function(){
     function insertclass(course, beginning) {
         classtemplate = $(".list-group-item")[0].outerHTML;
 
-    // Start with the template, make a new DOM element using jQuery
-    var newElem = $(classtemplate);
-    // Populate the data in the new element
-    newElem.innerHTML = course.title 
+        // Start with the template, make a new DOM element using jQuery
+        var newElem = $(classtemplate);
+        // Populate the data in the new element
+        newElem.text(course.name) 
 
-    if (beginning) {
-        $(".class-group").prepend(newElem);
-        console.log("prepend");
-    } else {
-        $(".class-group").append(newElem);
-    }
+        if (beginning) {
+            $(".class-group").prepend(newElem);
+            console.log(newElem.innerHTML);
+        } else {
+            $(".class-group").append(newElem);
+        }
     };
 
     function insertstudent(student, beginning) {
-    studenttemplate = $(".list-group-item")[0].outerHTML;
+        studenttemplate = $(".student-group .list-group-item")[0].outerHTML;
 
-    // Start with the template, make a new DOM element using jQuery
-    var newElem = $(studenttemplate);
-    // Populate the data in the new element
-    newElem.innerHTML = student.fname;
+        // Start with the template, make a new DOM element using jQuery
+        var newElem = $(studenttemplate);
+        // Populate the data in the new element
+        newElem.text(student.fname);
 
-    if (beginning) {
-        $(".student-group").prepend(newElem);
-        console.log("prepend");
-    } else {
-            $(".student-group").append(newElem);
-    }
+        if (beginning) {
+            $(".student-group").prepend(newElem);
+            console.log(newElem.innerHTML);
+        } else {
+                $(".student-group").append(newElem);
+        }
     };
 
     function createStudent(){
+        account.id = $("#idNumber").val();
         account.fname = $("#firstName").val();
         account.lname = $("#lastName").val();
-        account.id = $("#idNumber").val();
         account.email = $("#email").val();
-        account.phone = $('#phoneNumber').val();
         account.major = $("#major").val();
         account.gpa =  $("#gpa").val();
         account.gradDate = $("#graddate").val();
@@ -184,8 +184,8 @@ var Main = (function(){
             //onsuc onfail events for the post req
             var onSuccess = function()
             {
-                alert("Account" + " added: " + type);
-                console.log("Account" + " added: " + type);
+                alert("Account" + " added: ");
+                console.log("Account" + " added: ");
             };
             var onFailure = function()
             {
@@ -193,7 +193,7 @@ var Main = (function(){
                 alert("Account create error");
             };
 
-        makePostRequest("api/account/student",account,onSuccess,onFailure);
+        makePostRequest("/api/account/student",account,onSuccess,onFailure);
 
     }
 
@@ -206,8 +206,8 @@ var Main = (function(){
             //onsuc onfail events for the post req
             var onSuccess = function()
             {
-                alert("Account" + " added: " + type);
-                console.log("Account" + " added: " + type);
+                alert("Account" + " added: ");
+                console.log("Account" + " added: ");
             };
             var onFailure = function()
             {
@@ -215,7 +215,57 @@ var Main = (function(){
                 alert("Account create error");
             };
 
-        makePostRequest("api/account/instructor",account,onSuccess,onFailure);
+        makePostRequest("/api/account/instructor",account,onSuccess,onFailure);
+
+    }
+    function getStudentForEdit()
+    {
+        id = parseInt($("#editID").val());
+                    //onsuc onfail events for the get req
+                    var onSuccess = function(data)
+                    {
+                        console.log(data.student);
+                        document.getElementById("edit").style.display = "block";
+                        $("#editidNumber").val("" + data.student.id);
+                        $("#editfirstName").val(data.student.fname);
+                        $("#editlastName").val("" + data.student.lname);
+                        $("#editemail").val("" + data.student.email);
+                        $("#editmajor").val("" + data.student.major);
+                        $("#editgpa").val("" + data.student.gpa);
+                        $("#editgraddate").val("" + data.student.gradDate);
+                    };
+                    var onFailure = function()
+                    {
+                        console.log("Account not found");
+                        alert("Account not found");
+                    };
+        makeGetRequest("/api/account/student/" + id, onSuccess, onFailure)
+    }
+    function saveStudent()
+    {
+        var student = {};
+        student.id = parseInt($("#editID").val());
+        student.fname = $("#editfirstName").val();
+        student.lname = $("#editlastName").val();
+        student.email = $("#editemail").val();
+        student.major = $("#editmajor").val();
+        student.gpa =  parseInt($("#editgpa").val());
+        student.gradDate = $("#editgraddate").val();
+
+        var onSuccess = function()
+        {
+            alert("Account" + " saved");
+            console.log("Account" + " saved");
+            console.log(student);
+        };
+        var onFailure = function()
+        {
+            console.log(student);
+            console.log("Account save error");
+            alert(student.fname);
+        };
+
+        makePostRequest("/api/editaccount/student/" + student.id,student,onSuccess,onFailure);
 
     }
 
@@ -224,6 +274,9 @@ var Main = (function(){
         $('.getclasses').click(getClasses);
         $('.createclass').click(createClass);
         $('.createstudent').click(createStudent);
+        $('.savestudent').click(saveStudent);
+        $('.editstudent').click(getStudentForEdit);
+        document.getElementById("edit").style.display = "none";
     }
     return {
         start: start
