@@ -125,15 +125,35 @@ class Class(db.Model):
     name = db.Column(db.String(64),nullable = False,primary_key=True, unique=True)
     title = db.Column(db.String(64),nullable = False)
     desc = db.Column(db.String(2048),nullable = False)
+    positions = db.Column(db.Integer,default = 0)
+    filled_pos = db.Column(db.Integer,default = 0)
+
+    
 
 def rowToClass(row):
     row = {
         "name": row.name,
         "title": row.title,
-        "desc": row.desc
+        "desc": row.desc,
+        "positions" : row.positions,
+        "filled_pos" : row.filled_pos
         }
 
     return row
+
+#get classes without TA's or not enough TAs
+@app.route(baseURL + 'unfilled',methods=['GET'])
+def unfilCourses():
+    row = Class.query.all()
+    filtered = []
+    for ent in row:
+        if ent.filled_pos < ent.positions:
+            filtered.append(ent)
+    result = []
+    for ent in filtered:
+        result.append(rowToClass(ent))
+    return  jsonify({"status": 1, "classes": result}), 200
+    
 
 #route to create a new course
 @app.route(baseURL + 'newclass',methods=['POST'])
@@ -196,17 +216,82 @@ def getAllStudent():
 
 #TODO get all courses
 
-# #ta applications
-# class Application(db.Model):
-#     sid = db.Column(db.Integer, nullable = False)
-#     fid = db.Column(db.Integer,nullable = False)
-#     name = db.Column(db.String(64),nullable = False)
-#     grade = db.Column(db.String(3),nullable = False)
-#     semTaken = db.Column(db.String(64),nullable = False)
-#     date = db.Column(db.String(64),nullable = False)
-#     status = db.Column(db.String(64),nullable = False)
+#ta applications
+#need to change SID to be the primary key
+class Application(db.Model):
+    sid = db.Column(db.Integer, nullable = False)
+    fid = db.Column(db.Integer,nullable = False)
+    #future reference, this is the course name
+    name = db.Column(db.String(64),nullable = False,primary_key=True)
+    grade = db.Column(db.String(3),nullable = False)
+    semTaken = db.Column(db.String(64),nullable = False)
+    date = db.Column(db.String(64),nullable = False)
+    status = db.Column(db.String(64),nullable = False, default="Under Review")
+
+#table for TA's who are approved
+class CurrentTA(db.Model):
+    sid = db.Column(db.Integer, nullable = False)
+    fid = db.Column(db.Integer,nullable = False)
+    class_name = db.Column(db.String(64),nullable = False,primary_key=True)
+    ta_name = db.Column(db.String(64),nullable = False)
+
+def rowToTA(row):
+    row = {
+        "sid": row.sid,
+        "fid": row.fid,
+        "class_name": row.class_name,
+        "ta_name": row.ta_name
+        }
+    return row    
 
 
+def rowToApp(row):
+    row = {
+        "sid": row.sid,
+        "fid": row.fid,
+        "name": row.name,
+        "grade" : row.grade,
+        "semTaken" : row.semTaken,
+        "date" : row.date,
+        "status" : row.status
+        }
+    return row
+
+#should return TA's for a given course by coursename, this could be modified to be by professor, ID, etc
+#TODO need a route/function to add TA's to this table so there is anything to query
+@app.route(baseURL+"TAS")
+def getTAs():
+    className = request.args.get("className",None)
+    if className is None:
+        return "Must provide class name", 500
+    query = CurrentTA.query.filter_by(class_name = className)
+    results = []
+    for entry in query:
+        results.append(rowToTA(entry))
+    
+    return jsonify({"status":1,"TAs":results}), 200
+
+#change status of application based on JSON recieved and a given ID
+#TODO change this to automatically approve per a path, or deny via a path
+@app.route(baseURL + 'apply/<int:id>',methods=['POST'])
+def appStatus(id):
+    ta_app = Application(**request.json)
+    row = Application.query.filter_by(sid = id).first()
+    row.status = ta_app.status
+    db.session.commit()
+    db.session.refresh(row)
+    return jsonify({"status": 1, "app_status":rowToApp(row)}), 200
+
+@app.route(baseURL + 'apply',methods=['POST'])
+def newApp():
+    new_application = Application(**request.json)
+    try:
+        db.session.add(new_application)
+        db.session.commit()
+        db.session.refresh(new_application)
+        return jsonify({"status": 1, "Course": rowToApp(new_application)}), 200
+    except exc.IntegrityError:
+        return "duplicate name", 500
 # #login info
 
 #login is the email of the user
@@ -241,6 +326,8 @@ def loginToObj(log):
     }
     return row
 
+
+
 #route to do logins 
 
 #modify to accept the json to get passwords, decrypt the hash
@@ -253,8 +340,8 @@ def getLogin(login):
     if row != None:
         creds = loginToObj(row)
         pw = loginToObj(attLog)
-        print("row = " + str(creds));
-        print("pw = "+ str(pw));
+        print("row = " + str(creds))
+        print("pw = "+ str(pw))
 
         if creds["login"]==pw["login"] and creds["pw"]==pw["pw"]:
             session['logged_in']=True

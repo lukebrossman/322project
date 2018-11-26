@@ -138,3 +138,39 @@ function logintest()
     makePostRequest("login/"+login,credentials,onSuccess,onFailure);
 }
 
+var getUnfilled = function() {
+    // Prepare the AJAX handlers for success and failure
+    var onSuccess = function(data) {
+        //dynamic length to prevent errors
+        for(i = 0; i<data.classes.length; i++)
+        {
+            console.log(data.classes[i]);
+            insertclass(data.classes[i],true);
+        }
+        console.log(data.classes.length);
+        console.log("success get unfilled courses");
+    };
+    var onFailure = function() { 
+        console.error('get unfilled FAILED'); 
+    };
+    makeGetRequest("/api/unfilled" , onSuccess, onFailure);
+
+};
+
+//reused
+function insertclass(course, beginning) {
+    classtemplate = $(".list-group-item")[0].outerHTML;
+
+    // Start with the template, make a new DOM element using jQuery
+    var newElem = $(classtemplate);
+    // Populate the data in the new element
+    newElem.text(course.name) 
+
+    if (beginning) {
+        $(".class-group").prepend(newElem);
+        console.log(newElem.innerHTML);
+    } else {
+        $(".class-group").append(newElem);
+    }
+};
+
