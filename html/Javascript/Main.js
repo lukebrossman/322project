@@ -104,6 +104,28 @@ var Main = (function(){
 
     };
 
+    //function to get unfilled classes which need TA's
+    //calls api route which filters based on filled/available pos's
+    //uses insert class to show the data but may modify later on if necessary
+    var getUnfilled = function() {
+        // Prepare the AJAX handlers for success and failure
+        var onSuccess = function(data) {
+            //dynamic length to prevent errors
+            for(i = 0; i<data.classes.length; i++)
+            {
+                console.log(data.classes[i]);
+                insertclass(data.classes[i],true);
+            }
+            console.log(data.classes.length);
+            console.log("success get unfilled courses");
+        };
+        var onFailure = function() { 
+            console.error('get unfilled FAILED'); 
+        };
+        makeGetRequest("/api/unfilled" , onSuccess, onFailure);
+    
+    };
+
 
     function insertclass(course, beginning) {
         classtemplate = $(".list-group-item")[0].outerHTML;
