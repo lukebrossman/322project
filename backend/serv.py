@@ -118,7 +118,20 @@ def newIns():
     db.session.refresh(newProf)
     return jsonify({"status": 1, "newProf": rowToIns(newProf)}), 200
 
-#TODO get instructor data route
+#route to edit an instructor account
+@app.route(baseURL + 'editaccount/instructor/<int:id>',methods=['POST'])
+def editInstructor(id):
+    editedInstructor = Instructor(**request.json)
+    row = Instructor.query.filter_by(id = id).first()
+    row.id = editedInstructor.id
+    row.fname = editedInstructor.fname
+    row.lname = editedInstructor.lname
+    row.email = editedInstructor.email
+    row.phone = editedInstructor.phone
+    row.office = editedInstructor.office
+    db.session.commit()
+    db.session.refresh(row)
+    return jsonify({"status": 1, "editedIns":rowToIns(row)}), 200
 #courses
 
 class Class(db.Model):

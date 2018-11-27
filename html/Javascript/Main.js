@@ -3,7 +3,6 @@
 var Main = (function(){
     var apiUrl = 'http://localhost:5000'; //backend running on localhost
     var account = {};
-    var accountType = '';
 
     /** 
     * @param  {string}   url       URL path
@@ -46,12 +45,6 @@ var Main = (function(){
         alert("flask is serving the js");
     }
 
-    //Doesn't yet do anything
-    function setType(newType){
-        accountType = newType;
-    }
-    //TODO a function to pool data into a {} to send/parse jsons
-
     //grabs class info, calls make post req
     //TODO implement into html with onclick OR have a click listener
     //click listener is maybe more optimal but Im lazy af rn
@@ -73,34 +66,6 @@ var Main = (function(){
             alert("Class create error");
         };
         makePostRequest("/api/newclass",post,onSuccess,onFailure);   
-    }
-
-    //TODO implement into html with onclick OR have a click listener
-    function createAccount()
-    {
-        account.fname = $("#firstName").val();
-        account.lname = $("#lastName").val();
-        account.id = $("#idNumber").val();
-        account.email = $("#email").val();
-        account.phone = $('#phoneNumber').val();
-
-        //handle if our account is instructor or student since they have different fields
-        //they also have different db routes and this dynamically handles that
-        switch(accountType)
-        {
-            case type == "stud"://student account code block
-                window.location.assign("/student_account.html");
-                break;
-
-            case type == "ins"://instructor account code block
-                window.location.assign("/instructor_account.html");
-                break;
-
-            default:
-                alert("Err: No specified type");
-                console.log("Err: No specified type for account");
-                break;
-        } 
     }
 
     var getClasses = function() {
@@ -184,35 +149,45 @@ var Main = (function(){
             //onsuc onfail events for the post req
             var onSuccess = function()
             {
-                alert("Account" + " added: ");
-                console.log("Account" + " added: ");
+                alert("Student account" + " added: ");
+                console.log("Student account" + " added: ");
+                LoadProfilePage(account);
             };
             var onFailure = function()
             {
-                console.log("Account create error");
-                alert("Account create error");
+                console.log("Student account create error");
+                alert("Student account create error");
             };
 
         makePostRequest("/api/account/student",account,onSuccess,onFailure);
+    }
 
+    function LoadProfilePage(accountInfo)
+    {
+        console.log("Page Change");
+        window.location.assign("profilepage.html");
     }
 
 
     function createInstructor(){
 
-        account.phone = "TODO: need to implement field in html";
-        account.office = "TODO: need to implement field in html";
+        account.id = $("#idNumber").val();
+        account.fname = $("#firstName").val();
+        account.lname = $("#lastName").val();
+        account.email = $("#email").val();
+        account.phone = $('#phone').val();
+        account.office = $('#office').val();
         
             //onsuc onfail events for the post req
             var onSuccess = function()
             {
-                alert("Account" + " added: ");
-                console.log("Account" + " added: ");
+                alert("Instructor account" + " added: ");
+                console.log("Instructor account" + " added: ");
             };
             var onFailure = function()
             {
-                console.log("Account create error");
-                alert("Account create error");
+                console.log("Instructor account create error");
+                alert("Instructor account create error");
             };
 
         makePostRequest("/api/account/instructor",account,onSuccess,onFailure);
@@ -268,6 +243,55 @@ var Main = (function(){
         makePostRequest("/api/editaccount/student/" + student.id,student,onSuccess,onFailure);
 
     }
+
+    function getInstructorForEdit()
+    {
+        id = parseInt($("#inseditID").val());
+                    //onsuc onfail events for the get req
+                    var onSuccess = function(data)
+                    {
+                        console.log(data.instructor);
+                        document.getElementById("editins").style.display = "block";
+                        $("#inseditidNumber").val("" + data.instructor.id);
+                        $("#inseditfirstName").val(data.instructor.fname);
+                        $("#inseditlastName").val("" + data.instructor.lname);
+                        $("#inseditemail").val("" + data.instructor.email);
+                        $("#inseditphone").val("" + data.instructor.phone);
+                        $("#inseditoffice").val("" + data.instructor.office);
+                    };
+                    var onFailure = function()
+                    {
+                        console.log("Account not found");
+                        alert("Account not found");
+                    };
+        makeGetRequest("/api/account/instructor/" + id, onSuccess, onFailure)
+    }
+    function saveInstructor()
+    {
+        var instructor = {};
+        instructor.id = parseInt($("#inseditID").val());
+        instructor.fname = $("#inseditfirstName").val();
+        instructor.lname = $("#inseditlastName").val();
+        instructor.email = $("#inseditemail").val();
+        instructor.phone = $("#inseditphone").val();
+        instructor.office =  ($("#inseditoffice").val());
+
+        var onSuccess = function()
+        {
+            alert("Account" + " saved");
+            console.log("Account" + " saved");
+            console.log(student);
+        };
+        var onFailure = function()
+        {
+            console.log(student);
+            console.log("Account save error");
+            alert(instructor.fname);
+        };
+
+        makePostRequest("/api/editaccount/instructor/" + instructor.id,instructor,onSuccess,onFailure);
+    }
+
 
     function start(){
         $('.getstudents').click(getStudents);

@@ -15,7 +15,7 @@ input
     text-align:center;
     
 }
-*[role="form"] {
+.form-horizontal {
     max-width: 530px;
     padding: 15px;
     margin: 0 auto;
@@ -24,7 +24,7 @@ input
    
 }
 
-*[role="form"] h2 { 
+.form-horizontal h2 { 
     font-family: 'Roboto', sans-serif;
     font-size: 40px;
     font-weight: 700;
