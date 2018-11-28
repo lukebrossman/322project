@@ -118,20 +118,7 @@ def newIns():
     db.session.refresh(newProf)
     return jsonify({"status": 1, "newProf": rowToIns(newProf)}), 200
 
-#route to edit an instructor account
-@app.route(baseURL + 'editaccount/instructor/<int:id>',methods=['POST'])
-def editInstructor(id):
-    editedInstructor = Instructor(**request.json)
-    row = Instructor.query.filter_by(id = id).first()
-    row.id = editedInstructor.id
-    row.fname = editedInstructor.fname
-    row.lname = editedInstructor.lname
-    row.email = editedInstructor.email
-    row.phone = editedInstructor.phone
-    row.office = editedInstructor.office
-    db.session.commit()
-    db.session.refresh(row)
-    return jsonify({"status": 1, "editedIns":rowToIns(row)}), 200
+#TODO get instructor data route
 #courses
 
 class Class(db.Model):
@@ -193,11 +180,17 @@ def getAllClasses():
 
     return  jsonify({"status": 1, "classes": result}), 200
  
-#get instructor by ID
-@app.route(baseURL+"account/instructor/<int:id>",methods=["GET"])
-def getIns(id):
-    row = Instructor.query.filter_by(id=id).first()
-    return jsonify({"instructor":rowToIns(row),"status":1}),200
+#get instructor by email which is important
+#url has account/instructor?email=accountemail
+@app.route(baseURL+"account/instructor",methods=["GET"])
+def getIns():
+    email= request.args.get("email",None)
+
+    row = Instructor.query.filter_by(email=email).first()
+    if row == None:
+        return jsonify({"acc":"not ins" ,"status":1}),200
+    else:
+        return jsonify({"instructor":rowToIns(row),"status":1}),200
 
 #get all instructors
 @app.route(baseURL+"account/instructors",methods=["GET"])
@@ -205,11 +198,19 @@ def getAllIns():
     row = Instructor.query.filter_by(id=id).first()
     return jsonify({"instructor":rowToIns(row),"status":1}),200
 
-#get student by ID
-@app.route(baseURL+"account/student/<int:id>",methods=["GET"])
-def getStudent(id):
-    row = Student.query.filter_by(id=id).first()
-    return jsonify({"student":rowToStudent(row),"status":1}),200
+
+
+#get student by email because this is helpful for later
+#url has account/student?email=accountemail
+
+@app.route(baseURL+"account/student",methods=["GET"])
+def getStudent():
+    email= request.args.get("email",None)
+    row = Student.query.filter_by(email=email).first()
+    if row == None:
+        return jsonify({"acc":"not student" ,"status":1}),200
+    else:
+        return jsonify({"student":rowToStudent(row),"status":1}),200
 
 #gets all students
 @app.route(baseURL+"account/allstudents",methods=["GET"])
@@ -359,12 +360,14 @@ def getLogin(login):
         if creds["login"]==pw["login"] and creds["pw"]==pw["pw"]:
             session['logged_in']=True
             print("logged in successfully")
-            return jsonify({"status": 1, "login": login}, 200)
+            return jsonify({"status": 1, "login": row.accType}, 200)
         else:
             print("credential missmatch")
-            return jsonify({"status": 1, "login": login}, 500)
+            return jsonify({"status": 1, "login": "FAIL"}, 500)
     else:
         print("user not found")
+        return jsonify({"status": 1, "login": "FAIL"}, 500)
+
     return jsonify({"status": 1, "login": login}, 500)
 
 

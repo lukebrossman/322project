@@ -2,7 +2,6 @@
 //high likelihood that these will work "
 var Main = (function(){
     var apiUrl = 'http://localhost:5000'; //backend running on localhost
-    var account = {};
 
     /** 
     * @param  {string}   url       URL path
@@ -160,20 +159,27 @@ var Main = (function(){
     };
 
     function createStudent(){
+        var account = {};
+        var login = {};
         account.id = $("#idNumber").val();
         account.fname = $("#firstName").val();
         account.lname = $("#lastName").val();
         account.email = $("#email").val();
+        login.login = $("#email").val();
         account.major = $("#major").val();
         account.gpa =  $("#gpa").val();
         account.gradDate = $("#graddate").val();
         
+        login.pw = $('#password').val();
+        login.accType = "S";
+        if (login.pw == $('#confirmpassword').val())
+        {
             //onsuc onfail events for the post req
             var onSuccess = function()
             {
                 alert("Student account" + " added: ");
                 console.log("Student account" + " added: ");
-                LoadProfilePage(account);
+                CreateNewLogin(login);
             };
             var onFailure = function()
             {
@@ -181,30 +187,51 @@ var Main = (function(){
                 alert("Student account create error");
             };
 
-        makePostRequest("/api/account/student",account,onSuccess,onFailure);
+            makePostRequest("/api/account/student",account,onSuccess,onFailure);
+        }
+        else
+        {
+            alert("Passwords do not match");
+        }
     }
 
-    function LoadProfilePage(accountInfo)
+    function CreateNewLogin(login)
     {
-        console.log("Page Change");
-        window.location.assign("profilepage.html");
+        var onSuccess = function()
+        {
+            localStorage.setItem("usr",login.login);
+            alert("login created");
+            console.log("Page Change");
+            window.location.assign("profilepage.html");
+        }
+        var onFailure = function()
+        {
+            alert("login creation failed" + login.pw + " " + login.login);
+        }
+        makePostRequest("/api/login/create",login,onSuccess,onFailure);
     }
-
 
     function createInstructor(){
-
+        var account = {};
+        var login = {};
         account.id = $("#idNumber").val();
         account.fname = $("#firstName").val();
         account.lname = $("#lastName").val();
         account.email = $("#email").val();
+        login.login = $("#email").val();
         account.phone = $('#phone').val();
         account.office = $('#office').val();
         
+        login.pw = $('#password').val();
+        login.accType = "I";
+        if (login.pw == $('#confirmpassword').val())
+        {
             //onsuc onfail events for the post req
             var onSuccess = function()
             {
                 alert("Instructor account" + " added: ");
                 console.log("Instructor account" + " added: ");
+                CreateNewLogin(login)
             };
             var onFailure = function()
             {
@@ -212,8 +239,12 @@ var Main = (function(){
                 alert("Instructor account create error");
             };
 
-        makePostRequest("/api/account/instructor",account,onSuccess,onFailure);
-
+            makePostRequest("/api/account/instructor",account,onSuccess,onFailure);
+        }
+        else
+        {
+            alert("Passwords do not match");
+        }
     }
     function getStudentForEdit()
     {
@@ -238,6 +269,7 @@ var Main = (function(){
                     };
         makeGetRequest("/api/account/student/" + id, onSuccess, onFailure)
     }
+    //Save edited student info
     function saveStudent()
     {
         var student = {};
@@ -288,6 +320,7 @@ var Main = (function(){
                     };
         makeGetRequest("/api/account/instructor/" + id, onSuccess, onFailure)
     }
+    //save edited instructor info
     function saveInstructor()
     {
         var instructor = {};
@@ -314,15 +347,62 @@ var Main = (function(){
         makePostRequest("/api/editaccount/instructor/" + instructor.id,instructor,onSuccess,onFailure);
     }
 
+    function login()
+    {
+        var credentials ={};
+        document.getElementById("sub").addEventListener("click",function(event){event.preventDefault()});
+        credentials.login = $("#inputEmail").val();
+        credentials.pw = $("#inputPassword").val();
+        login = $("#inputEmail").val();
+        // console.log("sending login");
+        console.log($("#inputEmail").val());
+        var onSuccess = function(data)
+        {
+            // console.log("webpage logged in");
+            localStorage.setItem("usr",login);
+            if(data[0].login=="FAIL")
+            {
+                alert("Username/Password not found");
+            }
+            else
+            {
+                // alert("login");
+                localStorage.setItem("usr",login);
+                localStorage.setItem("acc_type",data[0].login);//get our account type and store for later
+                //determine redirect here
+                if(data[0].login=="s")//
+                {
+                    //TODO change to profile page of a student and auto init to get data
+                    window.open("../../html/student_account.html", '_self');//redirect to a student page
 
+                }
+                else
+                {   //TODO change to profile page of instructor and auto init to get data
+                    window.open("../../html/instructor_account.html", '_self');//redirect to a instructor page
+                }
+                // window.open("class.html", '_self');
+            }
+        };
+        var onFailure = function(data)
+        {
+            console.log("Unable to connect to server");
+            alert("Unable to connect to server");
+
+            // window.open("../../html/class.html", '_self');
+            // window.open("class.html", '_self');
+            console.log(data.login);
+        };
+
+        makePostRequest("api/login/"+login,credentials,onSuccess,onFailure);
+    }
     function start(){
         $('.getstudents').click(getStudents);
         $('.getclasses').click(getClasses);
         $('.createclass').click(createClass);
         $('.createstudent').click(createStudent);
+        $('.createinstructor').click(createInstructor);
         $('.savestudent').click(saveStudent);
         $('.editstudent').click(getStudentForEdit);
-        document.getElementById("edit").style.display = "none";
     }
     return {
         start: start

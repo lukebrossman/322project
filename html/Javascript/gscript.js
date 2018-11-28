@@ -120,7 +120,7 @@ function createAccount(type)
 function logintest()
 {
     var credentials ={};
-    document.getElementById("sub").addEventListener("click",function(event){event.preventDefault()});
+    // document.getElementById("sub").addEventListener("click",function(event){event.preventDefault()});
     credentials.login = $("#inputEmail").val();
     credentials.pw = $("#inputPassword").val();
     login = $("#inputEmail").val();
@@ -143,12 +143,13 @@ function logintest()
             if(data[0].login=="s")//
             {
                 //TODO change to profile page of a student and auto init to get data
-                window.open("../../html/student_account.html", '_self');//redirect to a student page
+                window.open("profilepage.html", '_self');//redirect to a student page
 
             }
             else
             {   //TODO change to profile page of instructor and auto init to get data
-                window.open("../../html/instructor_account.html", '_self');//redirect to a instructor page
+                window.open("profilepage.html", '_self');//redirect to a ins page once we have separate pages
+
             }
             // window.open("class.html", '_self');
         }
@@ -164,6 +165,30 @@ function logintest()
     };
 
     makePostRequest("login/"+login,credentials,onSuccess,onFailure);
+}
+
+//create a login to be called when account creation also happens
+//pass account type per page as a static variable of s on student page, i on instructor
+function createNewLogin(acc_type)
+{
+    var login = {};
+
+    login.login = $("#email").val();
+    login.pw = $("#password").val();
+    login.accType = acc_type;
+
+    var onSuccess = function()
+    {
+        alert("login created");
+        localStorage.setItem("usr",login.email);//set user email while login
+        localStorage.setItem("acc_type",login.type);//get our account type and store for later
+        // LoadProfilePage();
+    }
+    var onFailure = function()
+    {
+        alert("login creation failed");
+    }
+    makePostRequest("login/create",login,onSuccess,onFailure);
 }
 
 function globtest()

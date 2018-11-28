@@ -1,9 +1,19 @@
- <head>
+<HEAD>
+    <meta charset="utf-8"/>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <link rel="stylesheet" href="profilepage.css">
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="Javascript/jquery.min.js"></script>
+    <script type="text/javascript" src="Javascript/studentprofile.js"></script>
+    <script type="text/javascript" src="Javascript/Main.js"></script>
+        <script type="text/javascript">
+        $(function() {
+            Main.start();
+        });
+    </script>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-    <link href="profilepage.css" rel=stylesheet>
-</head>
+</HEAD>
 
     <!-- Ace Responsive Menu -->
     <nav>
@@ -22,13 +32,13 @@
             <li>
                 <a href="javascript:;">
                     <i class="fa fa-home" aria-hidden="true"></i>
-                    <span class="title">Sign Out</span>
+                    <span class="title" id="exit">Sign Out</span>
                 </a>
             </li>
             <li>
                 <a href="javascript:;">
                     <i class="fa fa-cube" aria-hidden="true"></i>
-                    <span class="title">Courses</span>
+                    <span class="title" id="option1">Courses</span>
 
                 </a>
                 <ul>
@@ -46,7 +56,7 @@
             <li>
                 <a href="javascript:;">
                     <i class="fa fa-cube" aria-hidden="true"></i>
-                    <span class="title">My Teaching Assistantships</span>
+                    <span class="title" id="option2">My Teaching Assistantships</span>
 
                 </a>
                 <ul>
@@ -61,7 +71,7 @@
 
             <b href="javascript:;">
                 <i class="fa fa-crop" aria-hidden="true"></i>
-                <span class="user_name">Luke Brossman</span>
+                <span class="user_name" id="uname">Default McDefaultFace</span>
             </b>
         </ul>
     </nav>
