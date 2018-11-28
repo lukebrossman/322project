@@ -233,10 +233,10 @@ def getAllStudent():
 #ta applications
 #need to change SID to be the primary key
 class Application(db.Model):
-    sid = db.Column(db.Integer, nullable = False)
+    sid = db.Column(db.Integer, nullable = False,primary_key=True)
     fid = db.Column(db.Integer,nullable = False)
     #future reference, this is the course name
-    name = db.Column(db.String(64),nullable = False,primary_key=True)
+    name = db.Column(db.String(64),nullable = False)
     grade = db.Column(db.String(3),nullable = False)
     semTaken = db.Column(db.String(64),nullable = False)
     date = db.Column(db.String(64),nullable = False)
@@ -273,7 +273,7 @@ def rowToApp(row):
 
 #should return TA's for a given course by coursename, this could be modified to be by professor, ID, etc
 #TODO need a route/function to add TA's to this table so there is anything to query
-@app.route(baseURL+"TAS")
+@app.route(baseURL+"TAS",methods=['GET'])
 def getTAs():
     className = request.args.get("className",None)
     if className is None:
@@ -284,6 +284,44 @@ def getTAs():
         results.append(rowToTA(entry))
     
     return jsonify({"status":1,"TAs":results}), 200
+
+#get all applications based on class name
+@app.route(baseURL+"getApps",methods=['GET'])
+def getApps():
+    className = request.args.get("className",None)
+    if className is None:
+        return "Must provide class name", 500
+    query = Application.query.filter_by(name= className)
+    results = []
+    for entry in query:
+        results.append(rowToApp(entry))
+    
+    return jsonify({"status":1,"Apps":results}), 200
+
+#get all approved TAs for a given classname
+@app.route(baseURL+"getApprovedApps",methods=['GET'])
+def getApprovedApps():
+    className = request.args.get("className",None)
+    if className is None:
+        return "Must provide class name", 500
+    query = Application.query.filter_by(name= className)
+    results = []
+    for entry in query:
+        # print(entry.status)
+        if entry.status == "Approved":
+            results.append(rowToApp(entry))
+    
+    return jsonify({"status":1,"Apps":results}), 200
+    
+#deletes all TA applications with the deny status
+@app.route(baseURL+"apply/delete",methods=['DELETE'])
+def delTAs():
+    
+    query = Application.query.filter_by(status="Deny")
+    query.delete()
+    db.session.commit()
+    
+    return "denied TAships deleted", 200
 
 #change status of application based on JSON recieved and a given ID
 #TODO change this to automatically approve per a path, or deny via a path
@@ -306,6 +344,10 @@ def newApp():
         return jsonify({"status": 1, "Course": rowToApp(new_application)}), 200
     except exc.IntegrityError:
         return "duplicate name", 500
+
+
+
+
 # #login info
 
 #login is the email of the user

@@ -239,3 +239,44 @@ function insertclass(course, beginning) {
     }
 };
 
+//approve based on a given student ID
+function taApprove()
+{
+    var appStatus = {};
+    appStatus.status="Approved"; //set json data var to approve
+
+    //get our student id based on instructor input
+    var sid = $("#studentId").val(); 
+
+    var onSuccess = function(data) {
+        console.log("app approving SUCCESS");
+
+    };
+    var onFailure = function() { 
+        console.log("app approving FAILED");
+    };
+    
+    makePostRequest("/api/apply/"+sid,appStatus,onSuccess,onFailure);
+};
+
+//deny based on a given student ID
+/* a student can use this function to "delete" their application*/
+function taDeny()
+{
+    var appStatus = {};
+    appStatus.status="Deny"; //set json data var to approve
+
+    //get our student id based on instructor input
+    var sid = $("#studentId").val(); 
+
+    var onSuccess = function(data) {
+        console.log("app approving SUCCESS");
+
+    };
+    var onFailure = function() { 
+        console.log("app approving FAILED");
+    };
+    
+    makePostRequest("/api/apply/"+sid,appStatus,onSuccess,onFailure);
+};
+
