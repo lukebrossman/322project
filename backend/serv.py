@@ -61,10 +61,8 @@ def newStudent():
 def editStudent(id):
     editedStudent = Student(**request.json)
     row = Student.query.filter_by(id = id).first()
-    row.id = editedStudent.id
     row.fname = editedStudent.fname
     row.lname = editedStudent.lname
-    row.email = editedStudent.email
     row.major = editedStudent.major
     row.gpa = editedStudent.gpa
     row.gradDate = editedStudent.gradDate
@@ -95,6 +93,17 @@ class Instructor(db.Model):
     phone = db.Column(db.String(64),nullable = False)
     office = db.Column(db.String(64),nullable = False)
  
+@app.route(baseURL + 'editaccount/instructor/<int:id>',methods=['POST'])
+def editInstructor(id):
+    editedInstructor = Instructor(**request.json)
+    row = Instructor.query.filter_by(id = id).first()
+    row.fname = editedInstructor.fname
+    row.lname = editedInstructor.lname
+    row.office = editedInstructor.office
+    row.phone = editedInstructor.phone
+    db.session.commit()
+    db.session.refresh(row)
+    return jsonify({"status": 1, "editedIns":rowToIns(row)}), 200
 
 #create a new instructor from a given json
 def rowToIns(row):
@@ -125,13 +134,15 @@ class Class(db.Model):
     name = db.Column(db.String(64),nullable = False,primary_key=True, unique=True)
     title = db.Column(db.String(64),nullable = False)
     desc = db.Column(db.String(2048),nullable = False)
-    positions = db.Column(db.Integer,default = 0)
+    positions = db.Column(db.Integer,default = 1)
     filled_pos = db.Column(db.Integer,default = 0)
+    fid= db.Column(db.Integer,nullable = False)
 
     
 
 def rowToClass(row):
     row = {
+        "fid" : row.fid,
         "name": row.name,
         "title": row.title,
         "desc": row.desc,
@@ -179,6 +190,23 @@ def getAllClasses():
         result.append(rowToClass(ent))
 
     return  jsonify({"status": 1, "classes": result}), 200
+
+
+#delete a class entry 
+@app.route(baseURL+'deleteClass',methods=['DELETE'])
+def deleteClass():
+    className = request.args.get("className",None)
+    if className is None:
+        return "Must specifiy classname", 500
+
+    query = Class.query.filter_by(name=className) #returns a list of the objects, must go through iteratively
+    query.delete()
+    db.session.commit()
+    
+    return "Class deleted", 200
+
+
+
  
 #get instructor by email which is important
 #url has account/instructor?email=accountemail
@@ -233,9 +261,11 @@ def getAllStudent():
 #ta applications
 #need to change SID to be the primary key
 class Application(db.Model):
-    sid = db.Column(db.Integer, nullable = False,primary_key=True)
+    sid = db.Column(db.Integer, nullable = False)
     fid = db.Column(db.Integer,nullable = False)
     #future reference, this is the course name
+    appid = db.Column(db.Integer, nullable = False,primary_key= True) #allows us to have multiple applications from 1 student, to multiple classes
+
     name = db.Column(db.String(64),nullable = False)
     grade = db.Column(db.String(3),nullable = False)
     semTaken = db.Column(db.String(64),nullable = False)
@@ -298,6 +328,32 @@ def getApps():
     
     return jsonify({"status":1,"Apps":results}), 200
 
+#get all applications based on professor id
+@app.route(baseURL+"getProfApps",methods=['GET'])
+def getProfApps():
+    input_fid = request.args.get("fid",None)
+    if input_fid is None:
+        return "Must provide facaulty id", 500
+    query = Application.query.filter_by(fid=input_fid)
+    results = []
+    for entry in query:
+        results.append(rowToApp(entry))
+    
+    return jsonify({"status":1,"Apps":results}), 200
+
+#get all applications based on student id
+@app.route(baseURL+"getStudentApps",methods=['GET'])
+def getStudentApps():
+    input_sid = request.args.get("sid",None)
+    if input_sid is None:
+        return "Must provide student id", 500
+    query = Application.query.filter_by(sid=input_sid)
+    results = []
+    for entry in query:
+        results.append(rowToApp(entry))
+    
+    return jsonify({"status":1,"Apps":results}), 200
+
 #get all approved TAs for a given classname
 @app.route(baseURL+"getApprovedApps",methods=['GET'])
 def getApprovedApps():
@@ -324,17 +380,21 @@ def delTAs():
     return "denied TAships deleted", 200
 
 #change status of application based on JSON recieved and a given ID
-#TODO change this to automatically approve per a path, or deny via a path
+#TODO test if this still works, should be able to approve/deny a specific application based on classname+id
+#should be a request url like api/apply/2?className=desiredclassname
 @app.route(baseURL + 'apply/<int:id>',methods=['POST'])
 def appStatus(id):
+    className = request.args.get("className",None)
     ta_app = Application(**request.json)
-    row = Application.query.filter_by(sid = id).first()
+    #double filter gets us the first result with sid = id and name = classname. If there are duplicates that meet those criteria, its a dup for the same student
+    row = Application.query.filter_by(sid = id).filter_by(name = className).first()
     row.status = ta_app.status
     db.session.commit()
     db.session.refresh(row)
     return jsonify({"status": 1, "app_status":rowToApp(row)}), 200
 
-@app.route(baseURL + 'apply',methods=['POST'])
+
+@app.route(baseURL + 'newapply/',methods=['POST'])
 def newApp():
     new_application = Application(**request.json)
     try:

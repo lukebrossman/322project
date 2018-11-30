@@ -1,6 +1,6 @@
 $(document).ready(function(){
-    LoadStudentProfilePage();
-    LoadUnfilledClasses();
+    LoadInstructorProfilePage();
+    LoadCoursesByLocalId();
 });
 var apiUrl = 'http://localhost:5000'; //backend running on localhost
 
@@ -39,54 +39,53 @@ var apiUrl = 'http://localhost:5000'; //backend running on localhost
             error: onFailure
         });
     };
-    function LoadStudentProfilePage()
+    function LoadInstructorProfilePage()
     {
         email = localStorage.getItem("usr");
         var onSuccess = function(data){
-            // console.log(data.student.fname);
-            $('#uname').text(data.student.fname + " " + data.student.lname);
-            localStorage.setItem("id",data.student.id);
+            $('#uname').text(data.instructor.fname + " " + data.instructor.lname);
+            localStorage.setItem("id",data.instructor.id);
+
         };
         var onFailure = function()
         {
             alert("account not found: " + email);
         };
-        makeGetRequest("/api/account/student?email="+email, onSuccess, onFailure);
-
+        makeGetRequest("/api/account/instructor?email="+email, onSuccess, onFailure);
     }
-
-    function LoadUnfilledClasses() {
+    function LoadCoursesByLocalId()
+    {
         // Prepare the AJAX handlers for success and failure
         var onSuccess = function(data) {
             //dynamic length to prevent errors
-            for(i = 0; i<data.classes.length; i++)
+            for(i = 0; i<data.Apps.length; i++)
             {
-                console.log(data.classes[i]);
-                insertclass(data.classes[i],true);
+                console.log(data.Apps[i]);
+                insertapp(data.Apps[i],true);
             }
-            console.log(data.classes.length);
-            console.log("success get unfilled courses");
+            console.log(data.Apps.length);
+            console.log("success get apps");
         };
         var onFailure = function() { 
-            console.error('get unfilled FAILED'); 
+            console.error('get apps FAILED'); 
         };
-        makeGetRequest("/api/unfilled" , onSuccess, onFailure);
-    };
+        makeGetRequest("/api/getProfApps?fid=" + localStorage.getItem("id"), onSuccess, onFailure);
+    }
 
-
-    function insertclass(course, beginning) {
-        classtemplate = $("#classapply")[0].outerHTML;
+    function insertapp(app, beginning) {
+        classtemplate = $("#class")[0].outerHTML;
 
         // Start with the template, make a new DOM element using jQuery
         var newElem = $(classtemplate);
         // Populate the data in the new element
-        newElem.attr("coursenum", course.name);
-        newElem.attr("fid", course.fid);
-        console.log(course.fid);
-        newElem.text(course.name + ": " + course.desc);
+        newElem.attr("value",app.name)//this technically could help later but doesnt matter
+        newElem.attr("coursenum", app.name);
+        newElem.attr("sid", app.sid);
+        newElem.text(app.name + ":   SID: " + app.sid);
         if (beginning) {
-            $(".unfilledclasses").prepend(newElem);
+            $(".applications").prepend(newElem);
+            console.log(newElem.innerHTML);
         } else {
-            $(".unfilledclasses").append(newElem);
+            $(".applications").append(newElem);
         }
     };

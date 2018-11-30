@@ -1,0 +1,271 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<head> <!--metadata-->
+<HEAD>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="creation.css">
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="Javascript/jquery.min.js"></script>
+    <script type="text/javascript" src="Javascript/studentprofile.js"></script>
+    <script type="text/javascript" src="Javascript/Main.js"></script>
+        <script type="text/javascript">
+        $(function() {
+            Main.start();
+        });
+    </script>
+    <title>TA Finder Profile Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="editprofile.css">
+</HEAD>
+
+
+<hr>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+  		<div class="col-sm-12"><h1 id="uname">Student McDefaultFace</h1></div> 
+    	
+    </div>
+    <div class="row justify-content-center">
+  		
+        
+
+      <div class="text-center">
+        <img src="wsu.png" alt="logo" class="logo">
+        
+      </div><br>
+
+        
+          <div class="col-sm-12"><!--left col-->
+          <ul class="list-group">
+            <li class="list-group-item text-muted">Application Information <i class="fa fa-dashboard fa-1x"></i></li>
+            <li class="list-group-item text-right"><span class="pull-left"><strong>Classes Applied to TA For:</strong></span>
+                <div id="application">app1 <div>
+                <div id="application">app2 <div></li>
+            <li class="list-group-item text-right"><span class="pull-left"><strong>Accepted Positions:</strong></span> Populate This</li>
+            <li class="list-group-item text-right"><span class="pull-left"><strong>Pending Approval:</strong></span> Populate This</li>
+            
+            </div>       
+         
+          
+       
+    	<div class="col-sm-12">
+            <ul class="nav nav-pills nav-justified">
+                <li class="active"><a href="#" data-target="#home" data-toggle="pill">Home</a></li>
+                <li><a href="#" data-target="#editprofile" data-toggle="pill">Edit Profile</a></li>
+                <li><a href="#" data-target="#applytoclasses" data-toggle="pill">Apply To Classes</a></li>
+                <li><a href="#" data-target="#changepassword" data-toggle="pill">Change Password</a></li>
+                
+            </ul>
+
+              
+          <div class="tab-content">
+            <div class="tab-pane active" id="home">
+                <hr>
+                  <form class="form" action="##" method="post" id="registrationForm">
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="first_name"><h4>First Name:</h4></label>
+                              <input type="text" class="form-control" name="first_name" id="first_name" placeholder="first name" title="enter your first name if any.">
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                            <label for="last_name"><h4>Last Name:</h4></label>
+                              <input type="text" class="form-control" name="last_name" id="last_name" placeholder="last name" title="enter your last name if any.">
+                          </div>
+                      </div>
+          
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="id"><h4>Student ID:</h4></label>
+                              <input type="text" class="form-control" name="id" id="id" placeholder="id" title="id">
+                          </div>
+                      </div>
+                      
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="email"><h4>Email Address:</h4></label>
+                              <input type="email" class="form-control" name="email" id="email" placeholder="you@email.com" title="enter your email.">
+                          </div>
+                      </div>
+                      
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="gpa"><h4>GPA:</h4></label>
+                              <input type="text" class="form-control" name="gpa" id="gpa" placeholder="gpa" title="gpa">
+                          </div>
+                      </div>
+                      
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="major"><h4>Major:</h4></label>
+                              <input type="text" class="form-control" name="major" id="major" placeholder="major" title="major">
+                          </div>
+                      </div>
+                     
+                      
+              	</form>
+              <hr>
+              
+             </div><!--/tab-pane-->
+              
+            <div class="tab-pane" id="editprofile">
+                <hr>
+                  <form class="form" action="##" method="post" id="registrationForm">
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="first_name"><h4>First Name:</h4></label>
+                              <input type="text" class="form-control" name="first_name" id="editfirstname" placeholder="first name" title="enter your first name if any.">
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                            <label for="last_name"><h4>Last Name:</h4></label>
+                              <input type="text" class="form-control" name="last_name" id="editlastname" placeholder="last name" title="enter your last name if any.">
+                          </div>
+                      </div>
+          
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="gpa"><h4>GPA:</h4></label>
+                              <input type="text" class="form-control" name="gpa" id="editgpa" placeholder="0.00" title="Enter your new GPA:">
+                          </div>
+                      </div>
+                      
+                        <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="major"><h4>Major:</h4></label>
+                              <input type="text" class="form-control" name="major" id="editmajor" placeholder="Computer Science" title="Enter your major:">
+                          </div>
+                      </div>
+          
+                     
+                      <div class="form-group">
+                           <div class="col-xs-12">
+                                <br>
+                              	<button class="btn btn-lg btn-success" type="submit" id="editstudent"><i class="glyphicon glyphicon-ok-sign"></i> Save</button>
+                               	<button class="btn btn-lg" style="background:red; cursor:pointer" type="reset"><i class="glyphicon glyphicon-refresh"></i> <font color="white"> Reset</font></button>
+                            </div>
+                      </div>
+              	</form>
+              
+              <hr>
+              
+             </div><!--/tab-pane-->
+              
+              <div class="tab-pane" id="applytoclasses">
+            		
+               	
+                  <hr>
+                  <form class="form" action="##" method="post" id="registrationForm">
+                    
+                      <div class="form-group">
+                           <div class="col-xs-12">
+                                <br>
+                               <label for="classapply"><h4>Class to Apply:</h4></label>
+                                <select class="unfilledclasses" id="unfilledclasses"> <!--dropdown menu-->
+                                    <option value="default" id="classapply"></option>
+                                </select>
+                        </div>
+                    </div>
+                          
+                        <div class="form-group">
+                          
+                          <div class="col-xs-6 col-xs-offset-3">
+                              
+                              <label for="grade"><h4>Grade:</h4></label>
+                               <select class="selectgrade" id="selectgrade"> <!--dropdown menu-->
+                                    <option value="A" id="grade">A</option>
+                                    <option value="A-" id="grade">A-</option>
+                                    <option value="B+" id="grade">B+</option>
+                                    <option value="B" id="grade">B</option>
+                                    <option value="B-" id="grade">B-</option>
+                                    <option value="C+" id="grade">C+</option>
+                                    <option value="C" id="grade">C</option>
+                                    <option value="Not Eligible" id="grade">Not eligible to apply...</option>
+                                </select>
+                          </div>
+                      </div>
+                              
+                      <div class="form-group">
+                        <div class="col-xs-6 col-xs-offset-3">
+                            
+                              <label for="semtaken"><h4>Semester Taken:</h4></label>
+                              <input type="text" class="form-control" name="semtaken" id="semtaken" placeholder="Fall 2018" title="Enter semester taken:">
+                          </div>
+                      </div>
+                               
+                        
+                    <div class="form-group">
+                           <div class="col-xs-12"> 
+                               <br>
+                               <br>
+                              	<button class="btn btn-lg btn-success" type="button" id="createapplication"><i class="glyphicon glyphicon-ok-sign"></i> Apply to Class</button>
+                               	<button class="btn btn-lg" style="background:red; cursor:pointer" type="reset"><i class="glyphicon glyphicon-remove"></i> <font color="white"> Cancel</font></button>
+                            </div>
+                      </div>
+              	</form>
+              
+              <hr>
+              
+             </div><!--/tab-pane-->
+              
+             <div class="tab-pane" id="changepassword">
+            		
+               	
+                  <hr>
+                  <form class="form" action="##" method="post" id="registrationForm">
+                     <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="password"><h4>Password:</h4></label>
+                              <input type="password" class="form-control" name="password" id="password" placeholder="password" title="enter your password.">
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                            <label for="password2"><h4>Re-enter Password:</h4></label>
+                              <input type="password" class="form-control" name="password2" id="password2" placeholder="password2" title="enter your password2.">
+                          </div>
+                      </div>
+                      <div class="form-group">
+                           <div class="col-xs-12">
+                                <br>
+                              	<button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i> Save</button>
+                               	<button class="btn btn-lg" style="background:red; cursor:pointer" type="reset"><i class="glyphicon glyphicon-remove"></i> <font color="white"> Cancel</font></button>
+                            </div>
+                      </div>
+              	</form>
+              
+              <hr>
+              
+             </div><!--/tab-pane-->
+          </div><!--/tab-content-->
+
+        </div><!--/col-9-->
+           
+       <!--/row-->
+        </div>
+    </div>
+    
+    
+</body>
+</hr>

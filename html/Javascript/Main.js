@@ -51,9 +51,10 @@ var Main = (function(){
     function createClass()
     {
         var post = {};
-        post.name = $("#className").val();
-        post.title = $("#classNum").val();
-        post.desc = $("#classDesc").val();
+        post.name = $("#addclassnum").val();
+        post.title = $("#addclasstitle").val();
+        post.desc = $("#addclassdesc").val();
+        post.fid = parseInt(localStorage.getItem("id")); //this cast fixes the issue
         var onSuccess = function()
         {
             alert("Class added");
@@ -63,6 +64,7 @@ var Main = (function(){
         {
             console.log("Class create error");
             alert("Class create error");
+            console.log(post);
         };
         makePostRequest("/api/newclass",post,onSuccess,onFailure);   
     }
@@ -83,7 +85,7 @@ var Main = (function(){
         makeGetRequest("/api/classes" , onSuccess, onFailure);
 
     };
-
+    //REMOVE
     var getStudents = function() {
         // Prepare the AJAX handlers for success and failure
         var onSuccess = function(data) {
@@ -122,9 +124,31 @@ var Main = (function(){
             console.error('get unfilled FAILED'); 
         };
         makeGetRequest("/api/unfilled" , onSuccess, onFailure);
-    
     };
+    function createApplication()
+    {
+        //FID AND SID NEED TO BE EITHER A STRING IN DB, OR PROPERLY GET VAL IN JS
+        var today = new Date();
+        var application = {};
+        application.date = today.getDate().toString()+"/"+(today.getMonth()+1).toString()+"/"+today.getFullYear().toString();
+        application.sid = parseInt(localStorage.getItem("id"));
+        application.semTaken = $("#semtaken").val();
+        var selectedclass = $("#unfilledclasses option:selected");
+        application.name = selectedclass.attr("coursenum");
+        application.fid = parseInt(selectedclass.attr("fid"));
+        var selectedgrade = $("#selectgrade option:selected");
+        application.grade = selectedgrade.attr("value");;
 
+
+        console.log(application);
+        var onSuccess = function() {
+            alert("Application recieved");
+        };
+        var onFailure = function() {
+            alert("application failed");
+        };
+        makePostRequest("/api/newapply/",application,onSuccess,onFailure);
+    }
 
     function insertclass(course, beginning) {
         classtemplate = $(".list-group-item")[0].outerHTML;
@@ -132,7 +156,7 @@ var Main = (function(){
         // Start with the template, make a new DOM element using jQuery
         var newElem = $(classtemplate);
         // Populate the data in the new element
-        newElem.text(course.name) 
+        newElem.text(course.name);
 
         if (beginning) {
             $(".class-group").prepend(newElem);
@@ -142,6 +166,31 @@ var Main = (function(){
         }
     };
 
+    function approveApplication()
+    {
+        var selectedApp = $("#applications option:selected");
+        var classname = selectedApp.attr("value");//classname
+        var sid = selectedApp.attr("sid");
+        var message = {};
+        message.status = "Approved";
+
+        var onFailure = function()
+        {
+            alert("Failed to approve selected TA");
+            console.log(selectedApp);
+            console.log(classname);
+            console.log(sid);
+        }
+        var onSuccess = function()
+        {
+            alert("Selected TA approved");
+        }
+
+        makePostRequest("/api/apply/"+123+"?className="+classname,message,onSuccess,onFailure);
+
+    }
+
+    //Flagging this, probably will be REMOVE.
     function insertstudent(student, beginning) {
         studenttemplate = $(".student-group .list-group-item")[0].outerHTML;
 
@@ -162,6 +211,7 @@ var Main = (function(){
         var account = {};
         var login = {};
         account.id = $("#idNumber").val();
+        localStorage.setItem("id", account.id);
         account.fname = $("#firstName").val();
         account.lname = $("#lastName").val();
         account.email = $("#email").val();
@@ -186,7 +236,6 @@ var Main = (function(){
                 console.log("Student account create error");
                 alert("Student account create error");
             };
-
             makePostRequest("/api/account/student",account,onSuccess,onFailure);
         }
         else
@@ -202,7 +251,7 @@ var Main = (function(){
             localStorage.setItem("usr",login.login);
             alert("login created");
             console.log("Page Change");
-            window.location.assign("profilepage.html");
+            LoadProfilePage(login.accType);
         }
         var onFailure = function()
         {
@@ -211,10 +260,26 @@ var Main = (function(){
         makePostRequest("/api/login/create",login,onSuccess,onFailure);
     }
 
+    function LoadProfilePage(accType)
+    {
+        localStorage.setItem("acc_type",accType)
+        if (accType == "S")
+        {
+            //STUDENT PROFILE PAGE GOES HERE
+            window.location.assign("profilestudent.html");
+        }
+        else if (accType == "I")
+        {
+            //INSTRUCTRO PROFILE PAGE GOES HERE
+            window.location.assign("profileinstructor.html");
+        }
+    }
+
     function createInstructor(){
         var account = {};
         var login = {};
         account.id = $("#idNumber").val();
+        localStorage.setItem("id", account.id);
         account.fname = $("#firstName").val();
         account.lname = $("#lastName").val();
         account.email = $("#email").val();
@@ -246,120 +311,86 @@ var Main = (function(){
             alert("Passwords do not match");
         }
     }
-    function getStudentForEdit()
-    {
-        id = parseInt($("#editID").val());
-                    //onsuc onfail events for the get req
-                    var onSuccess = function(data)
-                    {
-                        console.log(data.student);
-                        document.getElementById("edit").style.display = "block";
-                        $("#editidNumber").val("" + data.student.id);
-                        $("#editfirstName").val(data.student.fname);
-                        $("#editlastName").val("" + data.student.lname);
-                        $("#editemail").val("" + data.student.email);
-                        $("#editmajor").val("" + data.student.major);
-                        $("#editgpa").val("" + data.student.gpa);
-                        $("#editgraddate").val("" + data.student.gradDate);
-                    };
-                    var onFailure = function()
-                    {
-                        console.log("Account not found");
-                        alert("Account not found");
-                    };
-        makeGetRequest("/api/account/student/" + id, onSuccess, onFailure)
-    }
     //Save edited student info
-    function saveStudent()
+    function EditStudent()
     {
-        var student = {};
-        student.id = parseInt($("#editID").val());
-        student.fname = $("#editfirstName").val();
-        student.lname = $("#editlastName").val();
-        student.email = $("#editemail").val();
-        student.major = $("#editmajor").val();
-        student.gpa =  parseInt($("#editgpa").val());
-        student.gradDate = $("#editgraddate").val();
-
-        var onSuccess = function()
-        {
-            alert("Account" + " saved");
-            console.log("Account" + " saved");
-            console.log(student);
-        };
-        var onFailure = function()
-        {
-            console.log(student);
-            console.log("Account save error");
-            alert(student.fname);
-        };
-
-        makePostRequest("/api/editaccount/student/" + student.id,student,onSuccess,onFailure);
-
-    }
-
-    function getInstructorForEdit()
-    {
-        id = parseInt($("#inseditID").val());
+        email = localStorage.getItem("usr");
                     //onsuc onfail events for the get req
                     var onSuccess = function(data)
                     {
-                        console.log(data.instructor);
-                        document.getElementById("editins").style.display = "block";
-                        $("#inseditidNumber").val("" + data.instructor.id);
-                        $("#inseditfirstName").val(data.instructor.fname);
-                        $("#inseditlastName").val("" + data.instructor.lname);
-                        $("#inseditemail").val("" + data.instructor.email);
-                        $("#inseditphone").val("" + data.instructor.phone);
-                        $("#inseditoffice").val("" + data.instructor.office);
+                        var account = {};
+                        account = data.student;
+                        
+                        account.fname = $("#editfirstname").val();
+                        account.lname = $("#editlastname").val();
+                        account.major = $("#editmajor").val();
+                        account.gpa =  parseInt($("#editgpa").val());
+                        saveAccount(account);
                     };
                     var onFailure = function()
                     {
                         console.log("Account not found");
                         alert("Account not found");
                     };
-        makeGetRequest("/api/account/instructor/" + id, onSuccess, onFailure)
-    }
-    //save edited instructor info
-    function saveInstructor()
-    {
-        var instructor = {};
-        instructor.id = parseInt($("#inseditID").val());
-        instructor.fname = $("#inseditfirstName").val();
-        instructor.lname = $("#inseditlastName").val();
-        instructor.email = $("#inseditemail").val();
-        instructor.phone = $("#inseditphone").val();
-        instructor.office =  ($("#inseditoffice").val());
+        makeGetRequest("/api/account/student?email=" + email, onSuccess, onFailure);
 
+    }
+    function EditInstructor()
+    {
+        email = localStorage.getItem("usr");
+                    //onsuc onfail events for the get req
+                    var onSuccess = function(data)
+                    {
+                        var account = {};
+                        account = data.instructor;
+                        
+                        account.fname = $("#inseditfirstname").val();
+                        account.lname = $("#inseditlastname").val();
+                        account.phone = $("#inseditphone").val();
+                        account.office = $("#inseditoffice").val();
+                        saveAccount(account);
+                    };
+                    var onFailure = function()
+                    {
+                        console.log("Account not found");
+                        alert("Account not found");
+                    };
+        makeGetRequest("/api/account/instructor?email=" + email, onSuccess, onFailure);
+    }
+    //save edited account info
+    function saveAccount(account)
+    {
+        var type = localStorage.getItem("acc_type");
         var onSuccess = function()
         {
-            alert("Account" + " saved");
-            console.log("Account" + " saved");
-            console.log(student);
+            alert("Account updated");
+            console.log("Account updated");
+            LoadProfilePage(type);
         };
         var onFailure = function()
         {
-            console.log(student);
             console.log("Account save error");
-            alert(instructor.fname);
         };
-
-        makePostRequest("/api/editaccount/instructor/" + instructor.id,instructor,onSuccess,onFailure);
+        if (type == "I")
+        {
+            makePostRequest("/api/editaccount/instructor/" + account.id,account,onSuccess,onFailure);
+        } else
+        {
+            makePostRequest("/api/editaccount/student/" + account.id,account,onSuccess,onFailure);
+        }  
     }
 
     function login()
     {
+        
         var credentials ={};
-        document.getElementById("sub").addEventListener("click",function(event){event.preventDefault()});
         credentials.login = $("#inputEmail").val();
         credentials.pw = $("#inputPassword").val();
-        login = $("#inputEmail").val();
-        // console.log("sending login");
         console.log($("#inputEmail").val());
         var onSuccess = function(data)
         {
             // console.log("webpage logged in");
-            localStorage.setItem("usr",login);
+            localStorage.setItem("usr",credentials.login);
             if(data[0].login=="FAIL")
             {
                 alert("Username/Password not found");
@@ -367,42 +398,46 @@ var Main = (function(){
             else
             {
                 // alert("login");
-                localStorage.setItem("usr",login);
+                localStorage.setItem("usr",credentials.login);
                 localStorage.setItem("acc_type",data[0].login);//get our account type and store for later
                 //determine redirect here
-                if(data[0].login=="s")//
-                {
-                    //TODO change to profile page of a student and auto init to get data
-                    window.open("../../html/student_account.html", '_self');//redirect to a student page
-
-                }
-                else
-                {   //TODO change to profile page of instructor and auto init to get data
-                    window.open("../../html/instructor_account.html", '_self');//redirect to a instructor page
-                }
-                // window.open("class.html", '_self');
+                LoadProfilePage(data[0].login)
             }
         };
         var onFailure = function(data)
         {
             console.log("Unable to connect to server");
             alert("Unable to connect to server");
-
-            // window.open("../../html/class.html", '_self');
-            // window.open("class.html", '_self');
-            console.log(data.login);
         };
 
-        makePostRequest("api/login/"+login,credentials,onSuccess,onFailure);
+        makePostRequest("/api/login/"+credentials.login,credentials,onSuccess,onFailure);
     }
     function start(){
         $('.getstudents').click(getStudents);
         $('.getclasses').click(getClasses);
-        $('.createclass').click(createClass);
+        $('#createclass').click(function(event) {
+            createClass();
+            event.preventDefault();
+            });
         $('.createstudent').click(createStudent);
         $('.createinstructor').click(createInstructor);
-        $('.savestudent').click(saveStudent);
-        $('.editstudent').click(getStudentForEdit);
+        $('#editstudent').click(function(event) {
+            EditStudent();
+            event.preventDefault();
+            });
+        $('#editinstructor').click(function(event) {
+            EditInstructor();
+            event.preventDefault();
+            });
+        $('#createapplication').click(function(event) {
+            createApplication();
+            event.preventDefault();
+            });
+        $('#approveta').click(function(event) {
+            approveApplication();
+            event.preventDefault();
+            });
+        $('.loginbutton').click(login);
     }
     return {
         start: start
