@@ -70,7 +70,7 @@ var apiUrl = 'http://localhost:5000'; //backend running on localhost
         var onFailure = function() { 
             console.error('get apps FAILED'); 
         };
-        makeGetRequest("/api/getProfApps?fid=" + localStorage.getItem("id"), onSuccess, onFailure);
+        makeGetRequest("/api/getPendingProfApps?fid=" + localStorage.getItem("id"), onSuccess, onFailure);
     }
 
     function insertapp(app, beginning) {
@@ -79,7 +79,7 @@ var apiUrl = 'http://localhost:5000'; //backend running on localhost
         // Start with the template, make a new DOM element using jQuery
         var newElem = $(classtemplate);
         // Populate the data in the new element
-        newElem.attr("coursenum", app.name);
+        newElem.attr("classname", app.name);
         newElem.attr("sid", app.sid);
         newElem.text(app.name + "       "); //white space so that the menu is aesthetically wide
         if (beginning) {
@@ -92,7 +92,7 @@ var apiUrl = 'http://localhost:5000'; //backend running on localhost
     function LoadApplicationNames()
     {
         var selectedclass = $("#applications option:selected");
-        var classname = selectedclass.attr("coursenum");
+        var classname = selectedclass.attr("classname");
         // Prepare the AJAX handlers for success and failure
         var onSuccess = function(data) {
             //dynamic length to prevent errors

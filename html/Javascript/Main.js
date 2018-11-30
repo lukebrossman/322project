@@ -169,7 +169,7 @@ var Main = (function(){
     function approveApplication()
     {
         var selectedApp = $("#applications option:selected");
-        var classname = selectedApp.attr("value");//classname
+        var classname = selectedApp.attr("classname");//classname
         var sid = selectedApp.attr("sid");
         var message = {};
         message.status = "Approved";
@@ -186,7 +186,7 @@ var Main = (function(){
             alert("Selected TA approved");
         }
 
-        makePostRequest("/api/apply/"+123+"?className="+classname,message,onSuccess,onFailure);
+        makePostRequest("/api/apply/"+sid+"?className="+classname,message,onSuccess,onFailure);
 
     }
 
