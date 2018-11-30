@@ -1,6 +1,7 @@
 $(document).ready(function(){
     LoadInstructorProfilePage();
     LoadCoursesByLocalId();
+    $('.applications').change(LoadApplicationNames)
 });
 var apiUrl = 'http://localhost:5000'; //backend running on localhost
 
@@ -78,14 +79,49 @@ var apiUrl = 'http://localhost:5000'; //backend running on localhost
         // Start with the template, make a new DOM element using jQuery
         var newElem = $(classtemplate);
         // Populate the data in the new element
-        newElem.attr("value",app.name)//this technically could help later but doesnt matter
         newElem.attr("coursenum", app.name);
         newElem.attr("sid", app.sid);
-        newElem.text(app.name + ":   SID: " + app.sid);
+        newElem.text(app.name + "       "); //white space so that the menu is aesthetically wide
         if (beginning) {
             $(".applications").prepend(newElem);
-            console.log(newElem.innerHTML);
         } else {
             $(".applications").append(newElem);
+        }
+    };
+
+    function LoadApplicationNames()
+    {
+        var selectedclass = $("#applications option:selected");
+        var classname = selectedclass.attr("coursenum");
+        // Prepare the AJAX handlers for success and failure
+        var onSuccess = function(data) {
+            //dynamic length to prevent errors
+            for(i = 0; i<data.applicants.length; i++)
+            {
+                console.log(data.applicants[i]);
+                insertTA(data.applicants[i],true);
+            }
+            console.log(data.applicants.length);
+            console.log("success get applicants");
+        };
+        var onFailure = function() { 
+            console.error('get applicants FAILED'); 
+        };
+        makeGetRequest("/api/getApplicants?className=" + classname, onSuccess, onFailure);
+    }
+
+    function insertTA(applicant, beginning) {
+        tatemplate = $("#taname")[0].outerHTML;
+
+        // Start with the template, make a new DOM element using jQuery
+        var newElem = $(tatemplate);
+        // Populate the data in the new element
+        newElem.attr("sid", applicant.id);
+        newElem.text(applicant.fname + " " + applicant.lname); 
+        if (beginning) {
+            $(".TAs").prepend(newElem);
+            console.log(newElem.innerHTML);
+        } else {
+            $(".TAs").append(newElem);
         }
     };
