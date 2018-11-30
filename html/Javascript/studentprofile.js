@@ -1,6 +1,7 @@
 $(document).ready(function(){
-    LoadStudentProfilePage();
+    LoadStudentName();
     LoadUnfilledClasses();
+    LoadStudentApplications();
 });
 var apiUrl = 'http://localhost:5000'; //backend running on localhost
 
@@ -39,7 +40,7 @@ var apiUrl = 'http://localhost:5000'; //backend running on localhost
             error: onFailure
         });
     };
-    function LoadStudentProfilePage()
+    function LoadStudentName()
     {
         email = localStorage.getItem("usr");
         var onSuccess = function(data){
@@ -54,6 +55,34 @@ var apiUrl = 'http://localhost:5000'; //backend running on localhost
         makeGetRequest("/api/account/student?email="+email, onSuccess, onFailure);
 
     }
+
+    function LoadStudentApplications()
+    {
+        id = localStorage.getItem("id");
+        var onSuccess = function(data)
+        {
+            console.log("appinfo loaded: " + data.Apps.length)
+            for(i = 0; i<data.Apps.length; i++)
+            {
+                console.log(data.Apps[i]);
+                insertApp(data.Apps[i]);
+            }   
+        };
+        var onFailure = function()
+        {
+            alert("applications not found: " + id);
+        };
+        makeGetRequest("/api/getStudentApps?sid="+ id, onSuccess, onFailure);   
+    }
+    function insertApp(app) {
+        apptemplate = $(".appinfo")[0].outerHTML;
+
+        // Start with the template, make a new DOM element using jQuery
+        var newElem = $(apptemplate);
+        // Populate the data in the new element
+        newElem.text("Course Number: " + app.name + " | Status :" + app.status)
+        $("#applist").prepend(newElem);
+    };
 
     function LoadUnfilledClasses() {
         // Prepare the AJAX handlers for success and failure

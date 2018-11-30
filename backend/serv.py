@@ -69,6 +69,20 @@ def editStudent(id):
     db.session.commit()
     db.session.refresh(row)
     return jsonify({"status": 1, "editedStud":rowToStudent(row)}), 200
+
+@app.route(baseURL+"getApplicants",methods=['GET'])
+def getApplicants():
+    className = request.args.get("className",None)
+    apps = Application.query.filter_by(name= className)
+    results = []
+    print()
+    for app in apps:
+        print(app.sid)
+        student = Student.query.filter_by(id = app.sid).first()
+        results.append(rowToStudent(student))
+    
+    return jsonify({"status":1,"applicants":results}), 200
+    
   
 #convert a passed json to a student profile
 def rowToStudent(row):
@@ -328,16 +342,17 @@ def getApps():
     
     return jsonify({"status":1,"Apps":results}), 200
 
-#get all applications based on professor id
-@app.route(baseURL+"getProfApps",methods=['GET'])
-def getProfApps():
+#get all pending applications based on professor id
+@app.route(baseURL+"getPendingProfApps",methods=['GET'])
+def getPendingProfApps():
     input_fid = request.args.get("fid",None)
     if input_fid is None:
         return "Must provide facaulty id", 500
     query = Application.query.filter_by(fid=input_fid)
     results = []
     for entry in query:
-        results.append(rowToApp(entry))
+        if entry.status == "Under Review":
+            results.append(rowToApp(entry))
     
     return jsonify({"status":1,"Apps":results}), 200
 
